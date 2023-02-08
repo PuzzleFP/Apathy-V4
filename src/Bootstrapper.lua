@@ -9,5 +9,4 @@ getgenv().RequestServer = function(Type, Data)
     return HTTP(Package)
 end 
 
-local Apathy = RequestServer("GetApathy")
 local Carbon = loadstring(game:HttpGet("https://raw.githubusercontent.com/WoffleTbh/CarbonUI/main/carbonui.lua"))()
