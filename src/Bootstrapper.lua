@@ -24,3 +24,5 @@ getgenv().GetScript = function(Name, LoadIntoGlobalEnvironment)
 
 	return loadstring(Script.Body)()
 end 
+
+local Carbon = loadstring(game:HttpGet("https://raw.githubusercontent.com/WoffleTbh/CarbonUI/main/carbonui.lua"))()
