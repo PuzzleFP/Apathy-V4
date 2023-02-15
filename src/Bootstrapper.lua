@@ -1,6 +1,12 @@
+getgenv().Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/Library.lua"))()
+
+if game.PlaceId ~= 632574862 then 
+    return Library:Notify("Apathy V4 can only be injected in Eclipsis")
+end 
+
 getgenv().RequestServer = function(Type, Data)
     local Package = {
-        Url = "http://localhost:8090/",
+        Url = "http://localhost:8080/",
         Headers = {
             InstructionType = Type, 
             InstructionData = Data}
@@ -9,7 +15,20 @@ getgenv().RequestServer = function(Type, Data)
     return HTTP(Package)
 end 
 
-getgenv().Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/Library.lua"))()
+getgenv().ImportScript = function(Name)
+    return loadstring(RequestServer("GetScript", Name))()
+end 
+
+local AnticheatByass = ImportScript("AnticheatBypass")
+local Player = ImportScript("Player")
+local Jetpack = ImportScript("Jetpack")
+local Aimbot = ImportScript("Aimbot")
+local ESP = ImportScript("ESP")
+local SilentAim = ImportScript("SilentAim")
+local Spectators = ImportScript("Spectators")
+local Tools = ImportScript("Tools")
+local Miscellaneous = ImportScript("Miscellaneous")
+
 local Window = Library:CreateWindow({
     Title = 'Apathy V4',
     Center = true, 
@@ -17,7 +36,6 @@ local Window = Library:CreateWindow({
 })
 
 Library:Notify("Apathy V4 has been injected", 4)
-Library:Notify("Successfully terminated the anticheat", 4)
 
 local Tabs = {
     -- Creates a new tab titled Main
@@ -33,205 +51,80 @@ local ClientDamage = Tabs.Player:AddLeftTabbox():AddTab("Client Damage")
 local Speed = Tabs.Player:AddLeftTabbox():AddTab("Speed")
 local Jetpack = Tabs.Player:AddLeftTabbox():AddTab("Jetpack")
 local Portafab = Tabs.Player:AddRightTabbox():AddTab("Portafab")
-local Miscellaneous = Tabs.Player:AddRightTabbox():AddTab("Miscellaneous")
+local PlayerMiscellaneous = Tabs.Player:AddRightTabbox():AddTab("Miscellaneous")
 
 local Aimbot = Tabs.Aim:AddLeftTabbox():AddTab("Aimbot")
+
 
 local PlayerESP = Tabs.ESP:AddLeftTabbox():AddTab("Players")
 local StructureESP = Tabs.ESP:AddLeftTabbox():AddTab("Structures")
 local TerrainESP = Tabs.ESP:AddRightTabbox():AddTab("Terrain")
 
-ClientDamage:AddToggle('Fall Damage', {
-    Text = 'Fall Damage',
-    Default = true, 
-})
+local function CreateToggle(TabObject, Name, Callback, ...)
+    local Toggle = TabObject:AddToggle(Name, ...)
 
-ClientDamage:AddToggle('Ocean Damage', {
-    Text = 'Ocean Damage',
-    Default = true, 
-})
+    Toggles[Name]:OnChanged(function()
+        local ToggleValue = Toggles[Name].Value 
+        Callback(ToggleValue)
+    end)
 
-Speed:AddSlider('Walk Speed', {
-    Text = 'Walk Speed',
-    
-    Default = 16,
-    Min = 0,
-    Max = 325,
-    Rounding = 0,
+end 
 
-    Compact = false, 
-})
+local function CreateSlider(TabObject, Name, Callback, ...)
+    local Toggle = TabObject:AddSlider(Name, ...)
 
-Speed:AddSlider('Sprint Speed', {
-    Text = 'Walk Speed',
-    
-    Default = 24,
-    Min = 0,
-    Max = 325,
-    Rounding = 0,
+    Options[Name]:OnChanged(function()
+        local SliderValue = Options[Name].Value
+        Callback(SliderValue)
+    end)
 
-    Compact = false, 
-})
+end 
 
-Speed:AddSlider('Jump Power', {
-    Text = 'Jump Power',
-    
-    Default = 48,
-    Min = 0,
-    Max = 620,
-    Rounding = 0,
+local function CreateButton(TabObject, Name, Callback)
+    local Toggle = TabObject:AddButton(Name, Callback)
+end 
 
-    Compact = false,
-})
+CreateToggle(ClientDamage, "FallDamage", Player.SetFallDamage, {Text = "Fall Damage", Default = true})
+CreateToggle(ClientDamage, "OceanDamage", Player.SetOceanDamage, {Text = "Ocean Damage", Default = true})
 
-Jetpack:AddSlider('Thrust Power', {
-    Text = 'Thrust Power',
-    
-    Default = 17,
-    Min = 0,
-    Max = 265,
-    Rounding = 0,
+CreateSlider(Speed, "WalkSpeed", Player.SetWalkSpeed, {Text = "Walk Speed", Default = 16, Min = 0, Max = 325, Rounding = 0, Compact = false})
+CreateSlider(Speed, "SprintSpeed", Player.SetSprintSpeed, {Text = "Sprint Speed", Default = 24, Min = 0, Max = 650, Rounding = 0, Compact = false})
+CreateSlider(Speed, "JumpPower", Player.SetJumpPower, {Text = "Jump Power", Default = 48, Min = 0, Max = 455, Rounding = 0, Compact = false})
 
-    Compact = false, 
-})
+CreateSlider(Jetpack, "ThrustPower", Jetpack.SetThrustPower, {Text = "Thrust Power", Default = 16, Min = 0, Max = 325, Rounding = 0, Compact = false})
+CreateSlider(Jetpack, "ThrustTime", Jetpack.SetMaxThrustTime, {Text = "Thrust Time", Default = 1, Min = 0, Max = 400, Rounding = 0, Compact = false})
+CreateSlider(Jetpack, "CooldownTime", Jetpack.SetCooldownTime, {Text = "Cooldown Time", Default = 0.5, Min = 0, Max = 60, Rounding = 0, Compact = false})
+CreateToggle(Jetpack, "NoUsageCost", Jetpack.SetNoUseCost, {Text = "No Usage Cost", Default = false})
 
-Jetpack:AddSlider('Thrust Time', {
-    Text = 'Thrust Time',
-    
-    Default = 1,
-    Min = 0,
-    Max = 400,
-    Rounding = 0,
+CreateButton(PlayerMiscellaneous, "Teleport to Top of Map", Miscellaneous.ToTopOfMap)
+CreateButton(PlayerMiscellaneous, "Teleport to Bottom of Ocean", Miscellaneous.ToBottomOfOcean)
+CreateToggle(PlayerMiscellaneous, "LoopFlingEnemies", Miscellaneous.LoopFlingEnemies, {Text = "Loop Fling Enemies", Default = false})
+CreateToggle(PlayerMiscellaneous, "ForceSwim", Miscellaneous.ForceSwim, {Text = "Force Swim", Default = false})
+CreateToggle(PlayerMiscellaneous, "Noclip", Miscellaneous.Noclip, {Text = "Noclip", Default = false})
+CreateToggle(PlayerMiscellaneous, "Fly", Miscellaneous.Fly, {Text = "Fly", Default = false})
 
-    Compact = false, 
-})
+CreateToggle(PlayerMiscellaneous, "KeybindTeleport", Miscellaneous.KeybindTeleport, {Text = "Keybind Teleport", Default = false})
+Miscellaneous:AddLabel('Keybind Teleport'):AddKeyPicker('Keybind', { Default = 'E', NoUI = true, Text = 'Keybind'}) 
 
-Jetpack:AddSlider('Cooldown Time', {
-    Text = 'Cooldown Time',
-    
-    Default = 0.5,
-    Min = 0,
-    Max = 60,
-    Rounding = 0,
+-- CreateButton(Portafab, "Fill Backpack", )
+-- CreateToggle(Portafab, "AutoFillBackpack", Player.SetFallDamage, {Text = "Auto Fill Backpack", Default = true})
+-- CreateToggle(Portafab, "AutoIridium", Player.SetFallDamage, {Text = "Auto Iridium", Default = true})
+-- CreateButton(Portafab, "Fill Backpack", )
 
-    Compact = false, 
-})
+CreateToggle(PlayerESP, "Chams", ESP.ShowChams, {Text = "Show Chams", Default = false})
+CreateToggle(PlayerESP, "Tracers", ESP.ShowTracers, {Text = "Show Tracers", Default = false})
+CreateToggle(PlayerESP, "Boxes", ESP.ShowBoxes, {Text = "Show Boxes", Default = false})
+CreateToggle(PlayerESP, "ShowDistance", ESP.ShowDistance, {Text = "Show Distance", Default = false})
+CreateToggle(PlayerESP, "ShowIridium", ESP.ShowIridium, {Text = "Show Iridium", Default = false})
+CreateToggle(PlayerESP, "ShowWeapon", ESP.ShowWeapon, {Text = "Show Weapon", Default = false})
+CreateToggle(PlayerESP, "IgnoreTeam", ESP.IgnoreTeam, {Text = "Ignore Team", Default = false})
+CreateToggle(PlayerESP, "IgnoreLocalPlayer", ESP.IgnoreLocalPlayer, {Text = "Ignore Local Player", Default = false})
 
-Jetpack:AddToggle('No Usage Cost', {
-    Text = 'No Usage Cost',
-    Default = false,
-})
+CreateToggle(StructureESP, "ShowCruiseMissleTrajectory", ESP.ShowCruiseMissleTrajectory, {Text = "Show Cruise Missle Trajectory", Default = false})
+CreateToggle(StructureESP, "ShowArtilleryTrajectory", ESP.ShowArtilleryTrajectory, {Text = "Show Artillery Trajectory", Default = false})
 
-Portafab:AddButton('Fill Backpack', function()
-    print('You clicked a button!')
-end)
+CreateToggle(TerrainESP, "ShowBeaconSpots", ESP.ShowBeaconSpots, {Text = "Show Beacon Spots", Default = false})
+CreateToggle(TerrainESP, "ShowBeacons", ESP.ShowBeacon, {Text = "Show Beacons", Default = false})
+CreateToggle(TerrainESP, "ShowPumpClusters", ESP.ShowPumpClusters, {Text = "Show Pump Clusters", Default = false})
+CreateSlider(TerrainESP, "PumpClusterSize", Player.SetClusterSize, {Text = "Pump Cluster Size", Default = 3, Min = 0, Max = 8, Rounding = 0, Compact = false})
 
-Portafab:AddToggle('Auto Fill Backpack', {
-    Text = 'Auto Fill Backpack',
-    Default = false,
-})
-
-Portafab:AddToggle('Auto Iridium', {
-    Text = 'Auto Iridium',
-    Default = false,
-})
-
-PlayerESP:AddToggle('Chams', {
-    Text = 'Chams',
-    Default = false,
-})
-
-PlayerESP:AddToggle('Tracers', {
-    Text = 'Tracers',
-    Default = false,
-})
-
-PlayerESP:AddToggle('Boxes', {
-    Text = 'Tracers',
-    Default = false,
-})
-
-PlayerESP:AddToggle('ShowDistance', {
-    Text = 'Show Distance',
-    Default = false,
-})
-
-PlayerESP:AddToggle('ShowIridium', {
-    Text = 'Show Iridium',
-    Default = false,
-})
-
-PlayerESP:AddToggle('ShowWeapon', {
-    Text = 'Show Weapon',
-    Default = false,
-})
-
-StructureESP:AddToggle('Show Cruise Missle ', {
-    Text = 'Show Beacons',
-    Default = false,
-})
-
-TerrainESP:AddToggle('ShowBeaconSpots', {
-    Text = 'Show Beacon Spots',
-    Default = false,
-})
-
-TerrainESP:AddToggle('ShowBeacons', {
-    Text = 'Show Beacons',
-    Default = false,
-})
-
-
-TerrainESP:AddToggle('ShowPumpClusters', {
-    Text = 'Show Pump Clusters',
-    Default = false,
-})
-
-TerrainESP:AddSlider('PumpClusterSize', {
-    Text = 'Pump Cluster Size',
-    
-    Default = 3,
-    Min = 1,
-    Max = 8,
-    Rounding = 0,
-    
-    Compact = false, 
-})
-
-Miscellaneous:AddButton('Teleport to Top of Map', function()
-    print('You clicked a button!')
-end)
-
-Miscellaneous:AddButton('Drain Enemy Backpacks', function()
-    print('You clicked a button!')
-end)
-
-Miscellaneous:AddButton('Destroy all Crystals', function()
-    print('You clicked a button!')
-end)
-
-
-Miscellaneous:AddToggle('Loop Fling Enemies', {
-    Text = 'Loop Fling Enemies',
-    Default = false,
-})
-
-Miscellaneous:AddToggle('Force Swim', {
-    Text = 'Force Swim',
-    Default = false, 
-    Tooltip = 'Force the character into a swimming state', 
-})
-
-Miscellaneous:AddToggle('Noclip', {
-    Text = 'Noclip',
-    Default = false, 
-    Tooltip = 'Noclip allows you to phase through parts', 
-})
-
-
-Miscellaneous:AddToggle('Fly', {
-    Text = 'Fly',
-    Default = false,
-})
-
-Miscellaneous:AddLabel('Keybind Teleport'):AddKeyPicker('Keybind Teleport', { Default = 'E', NoUI = true, Text = 'Keybind Teleport' }) 
