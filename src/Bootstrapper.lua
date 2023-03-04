@@ -1,22 +1,11 @@
 getgenv().Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/Library.lua"))()
 
-if game.PlaceId ~= 632574862 then 
-    return Library:Notify("Apathy V4 can only be injected in Eclipsis")
-end 
-
-getgenv().RequestServer = function(Type, Data)
-    local Package = {
-        Url = "http://localhost:8080/",
-        Headers = {
-            InstructionType = Type, 
-            InstructionData = Data}
-    }
-
-    return HTTP(Package)
-end 
+-- if game.PlaceId ~= 632574862 then 
+--     return Library:Notify("Apathy V4 can only be injected in Eclipsis")
+-- end 
 
 getgenv().ImportScript = function(Name)
-    return loadstring(RequestServer("GetScript", Name))()
+    return  loadstring(syn.request({Url = "http://localhost:8080/Script/GetScript", Headers = {Script = Name}}).Body) 
 end 
 
 local AnticheatByass = ImportScript("AnticheatBypass")
