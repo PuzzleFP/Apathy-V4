@@ -5,7 +5,7 @@ getgenv().Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/w
 -- end 
 
 getgenv().ImportScript = function(Name)
-    Library:Notify("Importing script: ", Name)
+    Library:Notify("Importing script: ", Name, 2)
     return loadstring(syn.request({Url = "http://localhost:8080/Script/GetScript", Headers = {Script = Name}}).Body)()
 end 
 
