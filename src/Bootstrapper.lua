@@ -5,7 +5,7 @@ getgenv().Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/w
 -- end 
 
 getgenv().ImportScript = function(Name)
-    return  loadstring(syn.request({Url = "http://localhost:8080/Script/GetScript", Headers = {Script = Name}}).Body) 
+    return loadstring(syn.request({Url = "http://localhost:8080/Script/GetScript", Headers = {Script = Name}}).Body)()
 end 
 
 local AnticheatByass = ImportScript("AnticheatBypass")
