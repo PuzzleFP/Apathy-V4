@@ -6,7 +6,7 @@ getgenv().Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/w
 
 getgenv().ImportScript = function(Name)
     Library:Notify("Importing script: " .. Name, 4)
-    return loadstring(syn.request({Url = "http://localhost:8080/Script/GetScript", Headers = {Script = Name}}).Body)()
+    return loadstring(syn.request({Url = "http://white-forest-9280.fly.devScript/GetScript", Headers = {Script = Name}}).Body)()
 end 
 
 ImportScript("GlobalSettings")
