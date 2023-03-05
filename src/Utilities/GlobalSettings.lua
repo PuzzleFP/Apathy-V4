@@ -16,7 +16,7 @@ end
 
 getgenv().CreateCategory = function(CategoryName)
     if not CategoryName then 
-        false, "Could not create category, as a non-valid category name was passed"
+        return false, "Could not create category, as a non-valid category name was passed"
     end 
 
     getgenv().GlobalSettings[CategoryName] = {}
