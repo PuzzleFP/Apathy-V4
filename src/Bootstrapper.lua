@@ -5,10 +5,14 @@ getgenv().Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/w
 -- end 
 
 getgenv().ImportScript = function(Name)
-    Library:Notify("Importing script: " .. Name, 4)
+    if Name ~= "GlobalSettings" then
+       CreateCategory(Name) 
+    end
+    
     return loadstring(syn.request({Url = "http://white-forest-9280.fly.dev/Script/GetScript", Headers = {Script = Name}}).Body)()
 end 
 
+-- Global settings must be imported first so the categories of all other scripts can be created
 ImportScript("GlobalSettings")
 
 local AnticheatByass = ImportScript("AnticheatBypass")
