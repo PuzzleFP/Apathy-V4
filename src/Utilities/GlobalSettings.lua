@@ -5,7 +5,6 @@ getgenv().GlobalSettings = {}
 getgenv().GetScriptContext = function()
     -- Get the script that GetScriptContext was called in
     
-    print(getfenv(4).script)
     print(getfenv(3).script)
     print(getfenv(2).script)
     print(getfenv(1).script)
