@@ -9,7 +9,7 @@ getgenv().ImportScript = function(Name)
        CreateCategory(Name) 
     end
     
-    return loadstring(syn.request({Url = "http://white-forest-9280.fly.dev/Script/GetScript", Headers = {Script = Name}}).Body)()
+    return loadstring(syn.request({Url = "http://localhost:8080/Script/GetScript", Headers = {Script = Name}}).Body)()
 end 
 
 -- Global settings must be imported first so the categories of all other scripts can be created
