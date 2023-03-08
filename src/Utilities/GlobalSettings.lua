@@ -4,7 +4,7 @@ getgenv().GlobalSettings = {}
 
 getgenv().GetScriptContext = function()
     -- Get the script that GetScriptContext was called in
-    local Script = getfenv(2).script 
+    local Script = getfenv(3).script 
     return ScriptCategoryContext[Script] and ScriptCategoryContext[Script] or {}
 end 
 
@@ -46,7 +46,7 @@ getgenv().CreateGlobalSetting = function(CategoryName, SettingName, SettingValue
 end
 
 getgenv().GetGlobalSetting = function(Category, SettingName)
-   local IsCategory = getgenv().GlobalSettings[Category]
+   local IsCategory = GetScriptContext(Category)
 
    if not IsCategory then 
        return false, "Category could not be found"
