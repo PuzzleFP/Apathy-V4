@@ -14,6 +14,7 @@ end
 
 -- Global settings must be imported first so the categories of all other scripts can be created
 ImportScript("GlobalSettings")
+ImportScript("Settings")
 
 local AnticheatByass = ImportScript("AnticheatBypass")
 local Player = ImportScript("Player")
